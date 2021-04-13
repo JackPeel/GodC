@@ -700,10 +700,10 @@ public class GodCController {
         int rows = gocService.addheaderimage(image_url);
         if (rows == 1) {
             mag.setMsg("success");
-            mag.setText("轮播图片添加成功！");
+            mag.setText("首页轮播图片添加成功！");
         } else {
             mag.setMsg("fail");
-            mag.setText("轮播图片添加失败！");
+            mag.setText("首页轮播图片添加失败！");
         }
         return mag;
     }
