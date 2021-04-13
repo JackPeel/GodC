@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dbl.godc.mapper.GodCMapper">
+    <resultMap id="BaseResultMap" type="com.dbl.godc.domain.ThingSet">
+        <result column="thing_id" jdbcType="INTEGER" property="thing_id"/>
+        <result column="thing_title" jdbcType="VARCHAR" property="thing_title"/>
+        <result column="thing_content" jdbcType="VARCHAR" property="thing_content"/>
+        <result column="thing_url" jdbcType="VARCHAR" property="thing_url"/>
+        <result column="thing_fromurl" jdbcType="VARCHAR" property="thing_fromurl"/>
+        <result column="thing_creattime" jdbcType="VARCHAR" property="thing_creattime"/>
+        <result column="thing_zt" jdbcType="VARCHAR" property="thing_zt"/>
+    </resultMap>
+
+    <select id="selectAllThing" resultType="com.dbl.godc.domain.ThingSet">
+        select thing_id,thing_title,thing_creattime,thing_fromurl,thing_zt,thing_look from thing order by thing_creattime desc
+    </select>
+
+    <update id="updatelook" parameterType="map">
+        update thing set thing_look = #{thing_look} where thing_id = #{thing_id}
+    </update>
+
+    <select id="selectlookbythingid" resultType="Integer" parameterType="map">
+        select thing_look from thing where thing_id = #{thing_id}
+    </select>
+
+    <select id="selectThingById" resultType="com.dbl.godc.domain.ThingSet">
+        select * from thing where thing_id=#{thing_id}
+    </select>
+
+    <select id="selectCommentsByThingId" resultType="com.dbl.godc.domain.CommentSet">
+        select * from comments where thing_id=#{thing_id} order by comments_agree desc
+    </select>
+
+    <select id="selectuser" resultType="Integer" parameterType="map">
+        select count(*) from user where uid=#{uid}
+    </select>
+
+    <select id="login" resultType="Integer" parameterType="map">
+        select count(*) from user where uid=#{uid} and psw=#{psw}
+    </select>
+
+    <insert id="register" parameterType="map">
+        insert into user (uid,psw,yzm,ztime,zt,uuid) values(#{uid},#{psw},#{yzm},#{ztime},#{zt},#{uuid})
+    </insert>
+
+    <select id="findexist" resultType="Integer" parameterType="map">
+        select count(*) from user where uid=#{uid} and yzm=#{yzm}
+    </select>
+
+    <insert id="find" parameterType="map">
+        insert into user (uid,psw,yzm,ztime,zt,uuid) values(#{uid},#{psw},#{yzm},#{ztime},#{zt},#{uuid}) ON DUPLICATE KEY UPDATE uid=#{uid},psw=#{psw},yzm=#{yzm},ztime=#{ztime},zt=#{zt},uuid=#{uuid}
+    </insert>
+
+    <update id="updateuseruuid" parameterType="map">
+        update user set uuid = #{uuid} where uid = #{uid}
+    </update>
+
+    <select id="selectuseruuid" resultType="String" parameterType="map">
+        select uuid from user where uid=#{uid}
+    </select>
+
+    <insert id="changeuserinstro" parameterType="map">
+        insert into userinstro (uid,nick,sex,age,city,headbase64,instro,itime,focus,fans) values(#{uid},#{nick},#{sex},#{age},#{city},#{headbase64},#{instro},#{itime},#{focus},#{fans}) ON DUPLICATE KEY UPDATE uid=#{uid},nick=#{nick},sex=#{sex},age=#{age},city=#{city},headbase64=#{headbase64},instro=#{instro},itime=#{itime},focus=#{focus},fans=#{fans}
+    </insert>
+
+    <update id="updatefocus" parameterType="map">
+        update userinstro set focus = #{focus} where uid = #{uid}
+    </update>
+
+    <update id="updatefans" parameterType="map">
+        update userinstro set fans = #{fans} where uid = #{uid}
+    </update>
+
+    <select id="selectuserinstro" resultType="com.dbl.godc.domain.UserInstroSet">
+        select * from userinstro where uid=#{uid}
+    </select>
+
+    <insert id="addthing" parameterType="map">
+        insert into thing (thing_title,thing_content,thing_url,thing_fromurl,thing_creattime,thing_zt) values(#{thing_title},#{thing_content},#{thing_url},#{thing_fromurl},#{thing_creattime},#{thing_zt})
+    </insert>
+
+    <insert id="addcomment" parameterType="map">
+        insert into comments (thing_id,comments_user,comments_content,comments_agree,comments_location,comments_creattime,comments_zt) values(#{thing_id},#{comments_user},#{comments_content},#{comments_agree},#{comments_location},#{comments_creattime},#{comments_zt})
+    </insert>
+
+    <update id="updateagree" parameterType="map">
+        update comments set comments_agree = #{comments_agree} where comments_id = #{comments_id}
+    </update>
+
+    <select id="selectagreebycommentsid" resultType="Integer" parameterType="map">
+        select comments_agree from comments where comments_id = #{comments_id}
+    </select>
+
+    <update id="updateuserzt" parameterType="map">
+        update user set zt = #{zt} where uid = #{uid}
+    </update>
+
+    <select id="selectuserzt" resultType="String" parameterType="map">
+        select zt from user where uid=#{uid}
+    </select>
+
+    <select id="getreplysum" resultType="Integer" parameterType="map">
+        select count(*) from reply where comments_id=#{comments_id}
+    </select>
+
+    <insert id="addreply" parameterType="map">
+        insert into reply (comments_id,reply_goal,reply_user,reply_content,reply_agree,reply_location,reply_creattime,reply_zt) values(#{comments_id},#{reply_goal},#{reply_user},#{reply_content},#{reply_agree},#{reply_location},#{reply_creattime},#{reply_zt})
+    </insert>
+
+    <update id="updatereplyagree" parameterType="map">
+        update reply set reply_agree = #{reply_agree} where reply_id = #{reply_id}
+    </update>
+
+    <select id="selectreplyagreebyreplyid" resultType="Integer" parameterType="map">
+        select reply_agree from reply where reply_id = #{reply_id}
+    </select>
+
+    <select id="selectReplyByCommentsid" resultType="com.dbl.godc.domain.ReplySet">
+        select * from reply where comments_id=#{comments_id} order by reply_agree desc
+    </select>
+
+    <insert id="addcontract" parameterType="map">
+        insert into contractuser (contract_user,contract_zt,contract_purpose,contract_time) values(#{contract_user},#{contract_zt},#{contract_purpose},#{contract_time})
+    </insert>
+
+    <select id="selectctByuser" resultType="com.dbl.godc.domain.ContractSet">
+        select * from contractuser where contract_user=#{contract_user}
+    </select>
+
+    <select id="selectContractuser" resultType="com.dbl.godc.domain.ContractSet">
+        select * from contractuser order by contract_time desc
+    </select>
+
+    <delete id="deleteContractuser" parameterType="map">
+        delete from contractuser where contract_user = #{contract_user}
+    </delete>
+
+    <update id="updatectuzt" parameterType="map">
+        update contractuser set contract_zt = #{contract_zt} where contract_user = #{contract_user}
+    </update>
+
+    <update id="updatethingzt" parameterType="map">
+        update thing set thing_zt = #{thing_zt} where thing_id = #{thing_id}
+    </update>
+
+    <select id="selectUser" resultType="com.dbl.godc.domain.UserSet">
+        select * from user order by ztime desc
+    </select>
+
+    <select id="searchuser" resultType="com.dbl.godc.domain.UserSet">
+        select * from user where uid like #{key} order by ztime desc
+    </select>
+
+    <select id="searchcontractuser" resultType="com.dbl.godc.domain.ContractSet">
+        select * from contractuser where contract_user like #{key} order by contract_time desc
+    </select>
+
+    <select id="searchthing" resultType="com.dbl.godc.domain.ThingSet">
+        select thing_id,thing_title,thing_creattime,thing_fromurl,thing_zt,thing_look from thing where thing_zt = #{thing_zt} and (thing_title like #{key} or thing_content like #{key} or thing_fromurl  like #{key}) order by thing_creattime desc
+    </select>
+
+    <insert id="addofflinemsg" parameterType="map">
+        insert into offlinemsg (from_uid,to_uid,offline_time,offline_content,offline_status) values(#{from_uid},#{to_uid},#{offline_time},#{offline_content},#{offline_status})
+    </insert>
+
+    <select id="getofflinemsgbytouid" resultType="com.dbl.godc.domain.OfflineSet">
+        select * from offlinemsg where to_uid = #{to_uid} and offline_status = #{offline_status}
+    </select>
+
+    <update id="updateofflinemsgstatus" parameterType="map">
+        update offlinemsg set offline_status = #{offline_status} where offline_id = #{offline_id}
+    </update>
+
+    <select id="getheaderimage" resultType="com.dbl.godc.domain.ImageSet">
+        SELECT * FROM headerimage LIMIT 7
+    </select>
+
+    <insert id="addheaderimage" parameterType="map">
+        insert into headerimage (image_url) values(#{image_url})
+    </insert>
+</mapper>
